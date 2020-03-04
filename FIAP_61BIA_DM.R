@@ -10,7 +10,7 @@ library(wordcloud)
 library(dplyr)
 library(stringr)
 
-
+#Commands to use in MAC
 #rm(list = ls())
 #ls()
 #getwd()
@@ -27,19 +27,21 @@ cps <- Corpus(DirSource('D:/TM5',
                         encoding = "UTF-8"),
               readerControl = list(language = "pt"))
 
-
-cps <- Corpus(DirSource("/Users/andrecarvalho/Desktop/TM2",
-                        encoding = "UTF-8"),
-              readerControl = list(language = "pt"))
+#Commands to use in MAC
+#cps <- Corpus(DirSource("/Users/andrecarvalho/Desktop/TM2",
+#                       encoding = "UTF-8"),
+#              readerControl = list(language = "pt"))
 
 
 cps <- tm_map(cps, stripWhitespace)
 cps <- tm_map(cps, content_transformer(tolower))
+#removendo artigos e palavras irrelevantes para an�lise
 cps <- tm_map(cps, removeWords, stopwords("portuguese"))
 #cps <- tm_map(cps, stemDocument)
 cps <- tm_map(cps, removeNumbers)
 cps <- tm_map(cps, removePunctuation)
-cps <- tm_map(cps, removeWords, c("falo", "galeno", "senhor","proqu","a","A","agora","ainda","pra","tá","dá","lá","tô","né",
+#palavras que quero remover da minha an�lise
+cps <- tm_map(cps, removeWords, c("falo", "galeno", "proqu","a","coisas","A","agora","ainda","pra","tá","dá","lá","tô","né",
                                   "algum","alguma","algumas","alguns","antes","senhora","quatro","aqui","a�","conta", "faz", "hoje",   
                                   "ao","Ao","aos","aqui","as","se","As","assim","Assim","bem","zero", "vinte", "dia", "coisa", "coisas",     
                                   "das","dava","de","dela","dele","dentro","dizer", "dizia", "do","muita", "venha", "entrar", "opini�o",  
@@ -65,13 +67,13 @@ dtm <- DocumentTermMatrix(cps)
 dim(dtm)
 
 
-findFreqTerms(dtm, lowfreq = 10)
+findFreqTerms(dtm, lowfreq = 6)
 
 freq <- sort(colSums(as.matrix(dtm)), decreasing = TRUE)
 
 length(freq)
-head(freq, 10)
-tail(freq, 10)
+head(freq, 6)
+tail(freq, 6)
 
 ord <- order(freq)
 
@@ -85,7 +87,7 @@ inspect(dtms)
 
 write.csv(freq, file = "frequencies.csv")
 
-findAssocs(dtm,terms = "artificial",0.41)
+findAssocs(dtm,terms = "artificial",0.8)
 findAssocs(dtm, c("artificial", "humano", "trabalho"), c(0.7, 0.7, 0.7))
 
 plot(dtm, terms = names(findAssocs(dtm,term="artificial",0.8)[["artificial"]]), corThreshold = 0.80)
@@ -105,11 +107,11 @@ rect.hclust(fit, k = 6) # modelo com 6 clusters
 
 ### wordcloud
 
-set.seed(142)
-wordcloud(names(freq), freq, max.words = 100)
-wordcloud(names(freq), freq, min.freq = 100)
-wordcloud(names(freq), freq, min.freq = 100, colors = brewer.pal(6, "Dark2"))
-wordcloud(names(freq), freq, min.freq = 100, scale=c(5, .1), colors = brewer.pal(6, "Dark2"))
+set.seed(10)
+wordcloud(names(freq), freq, max.words = 10)
+wordcloud(names(freq), freq, min.freq = 10)
+wordcloud(names(freq), freq, min.freq = 10, colors = brewer.pal(6, "Dark2"))
+wordcloud(names(freq), freq, min.freq = 10, scale=c(5, .1), colors = brewer.pal(6, "Dark2"))
 
 words <- dtm %>%
   as.matrix %>%
